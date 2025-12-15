@@ -10,7 +10,7 @@ data class PhotoModel(
     @SerializedName("alt_description")
     val description: String?,
 
-    val url: PhotoUrl?
+    val urls: PhotoUrl?
 ){
     data class PhotoUrl(
         val raw: String,
