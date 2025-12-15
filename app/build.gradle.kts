@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,6 +17,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        android.buildFeatures.buildConfig = true
+
+        buildConfigField("String", "unsplash_api_key_access", properties.getProperty("unsplash_api_key_access"))
     }
 
     buildTypes {
@@ -46,6 +54,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("com.squareup.retrofit2:retrofit:3.0.0") // retrofit for call api
     implementation("com.squareup.retrofit2:converter-gson:3.0.0") // gson converter for change json -> kotlin obj
     implementation("com.github.bumptech.glide:glide:5.0.5") // glide for loading image
