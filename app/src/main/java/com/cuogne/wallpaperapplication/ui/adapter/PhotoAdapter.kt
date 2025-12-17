@@ -4,15 +4,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
 
 class PhotoAdapter(
-    private var listPhotos: List<PhotoModel>,
     private val onItemClick: ((PhotoModel) -> Unit)? = null
-) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
+) : ListAdapter<PhotoModel, PhotoAdapter.ViewHolder>(DIFF) {
+    companion object {
+        val DIFF = object: DiffUtil.ItemCallback<PhotoModel>() {
+            override fun areItemsTheSame(
+                oldItem: PhotoModel,
+                newItem: PhotoModel
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: PhotoModel,
+                newItem: PhotoModel
+            ): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -25,7 +45,7 @@ class PhotoAdapter(
         holder: ViewHolder,
         position: Int
     ) {
-        val selectedPhoto = listPhotos[position]
+        val selectedPhoto = getItem(position)
 
         holder.photo.load(selectedPhoto.urls?.small) // use coil
 
@@ -34,13 +54,12 @@ class PhotoAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return listPhotos.size
+    init {
+        setHasStableIds(true)
     }
 
-    fun updatePhotos(newPhotos: List<PhotoModel>) {
-        this.listPhotos = newPhotos
-        notifyDataSetChanged()
+    override fun getItemId(position: Int): Long {
+        return getItem(position).id.hashCode().toLong()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
