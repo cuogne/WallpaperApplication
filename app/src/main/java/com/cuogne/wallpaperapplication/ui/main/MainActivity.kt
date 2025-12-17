@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.ui.adapter.PhotoAdapter
+import com.cuogne.wallpaperapplication.utils.randomNumberPages
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerViewPhoto: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var photoAdapter: PhotoAdapter
+    private var startPage = randomNumberPages()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +31,12 @@ class MainActivity : AppCompatActivity() {
         observeViewModel()
 
         swipeRefreshLayout.setOnRefreshListener {
-            val startPage = randomNumberPages()
-            val endPage = startPage + 5
-            viewModel.getPhotos(startPage, endPage)
+            startPage = randomNumberPages()
+            viewModel.getPhotos(startPage, startPage + 5)
         }
 
         swipeRefreshLayout.isRefreshing = true
-        viewModel.getPhotos(1, 5)
+        viewModel.getPhotos(startPage, startPage + 5)
     }
 
     private fun setupRecyclerView() {
@@ -51,9 +52,5 @@ class MainActivity : AppCompatActivity() {
             photoAdapter.updatePhotos(listPhoto)
             swipeRefreshLayout.isRefreshing = false
         }
-    }
-
-    private fun randomNumberPages(): Int{
-        return (1..20).random()
     }
 }
