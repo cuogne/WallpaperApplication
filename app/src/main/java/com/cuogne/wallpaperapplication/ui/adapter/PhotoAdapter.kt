@@ -10,7 +10,7 @@ import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
 
 class PhotoAdapter(
-    private val listPhotos: List<PhotoModel>,
+    private var listPhotos: List<PhotoModel>,
     private val onItemClick: ((PhotoModel) -> Unit)? = null
 ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
@@ -38,6 +38,11 @@ class PhotoAdapter(
 
     override fun getItemCount(): Int {
         return listPhotos.size
+    }
+
+    fun updatePhotos(newPhotos: List<PhotoModel>) {
+        this.listPhotos = newPhotos
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
