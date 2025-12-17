@@ -60,4 +60,5 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5") // glide for loading image
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2") // coroutines for async task
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0") // using lifecycle
+    implementation("com.google.android.material:material:1.13.0")
 }

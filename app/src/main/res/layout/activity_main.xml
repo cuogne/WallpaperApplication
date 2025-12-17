@@ -6,29 +6,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="15dp"
+    android:background="@color/white"
     tools:context=".ui.main.MainActivity">
 
     <TextView
         android:id="@+id/titleApplication"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PhotoApp"
+        android:text="WallpaperApp"
         android:textStyle="bold"
         android:textSize="25sp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewPhoto" />
+        app:layout_constraintBottom_toTopOf="@+id/searchBar" />
+
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:hint="Tìm kiếm..."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleApplication"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPhoto"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleApplication" />
+        app:layout_constraintTop_toBottomOf="@+id/searchBar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

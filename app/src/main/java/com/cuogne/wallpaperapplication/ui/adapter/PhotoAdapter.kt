@@ -28,7 +28,7 @@ class PhotoAdapter(
         val selectedPhoto = listPhotos[position]
 
         Glide.with(holder.itemView.context)
-            .load(selectedPhoto.urls?.raw)
+            .load(selectedPhoto.urls?.small)
             .into(holder.photo)
 
         holder.itemView.setOnClickListener {
