@@ -57,9 +57,10 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("com.squareup.retrofit2:retrofit:3.0.0") // retrofit for call api
     implementation("com.squareup.retrofit2:converter-gson:3.0.0") // gson converter for change json -> kotlin obj
-    implementation("com.github.bumptech.glide:glide:5.0.5") // glide for loading image
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2") // coroutines for async task
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0") // using lifecycle
     implementation("com.google.android.material:material:1.13.0") // material 3 ui design of google
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0") // pull to refresh
+    implementation("io.coil-kt.coil3:coil:3.3.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 }

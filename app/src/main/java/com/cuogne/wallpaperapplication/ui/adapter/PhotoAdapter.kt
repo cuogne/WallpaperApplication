@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import coil3.load
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
 
@@ -27,9 +27,7 @@ class PhotoAdapter(
     ) {
         val selectedPhoto = listPhotos[position]
 
-        Glide.with(holder.itemView.context)
-            .load(selectedPhoto.urls?.small)
-            .into(holder.photo)
+        holder.photo.load(selectedPhoto.urls?.small) // use coil
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(selectedPhoto)
