@@ -1,5 +1,6 @@
 package com.cuogne.wallpaperapplication.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.ui.adapter.PhotoAdapter
+import com.cuogne.wallpaperapplication.ui.detail.DetailImageActivity
 import com.cuogne.wallpaperapplication.utils.randomNumberPages
 
 class MainActivity : AppCompatActivity() {
@@ -41,9 +43,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        photoAdapter = PhotoAdapter()
+        photoAdapter = PhotoAdapter{
+            val intent = Intent(this, DetailImageActivity::class.java)
+            intent.putExtra("photo", it)
+            startActivity(intent)
+        }
+
         val layout = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         layout.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        recyclerViewPhoto.setHasFixedSize(true)
         recyclerViewPhoto.layoutManager = layout
         recyclerViewPhoto.adapter = photoAdapter
 

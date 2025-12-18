@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WallpaperApplication">
         <activity
+            android:name=".ui.detail.DetailImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
