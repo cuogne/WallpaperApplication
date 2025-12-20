@@ -1,5 +1,7 @@
 package com.cuogne.wallpaperapplication.ui.adapter
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
+import coil3.request.transformations
+import coil3.transform.CircleCropTransformation
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 
 class PhotoAdapter(
     private val onItemClick: ((PhotoModel) -> Unit)? = null
@@ -47,7 +55,9 @@ class PhotoAdapter(
     ) {
         val selectedPhoto = getItem(position)
 
-        holder.photo.load(selectedPhoto.urls?.small) // use coil
+        holder.photo.load(selectedPhoto.urls?.small){
+            placeholder(selectedPhoto.color.toColorInt().toDrawable())
+        } // use coil
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(selectedPhoto)

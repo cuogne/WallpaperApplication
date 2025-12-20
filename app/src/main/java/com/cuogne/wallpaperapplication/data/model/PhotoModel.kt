@@ -12,7 +12,7 @@ data class PhotoModel(
 
     @SerializedName("alt_description")
     val description: String?,
-
+    val color: String,
     val urls: PhotoUrl?
 ): Parcelable {
     @Parcelize

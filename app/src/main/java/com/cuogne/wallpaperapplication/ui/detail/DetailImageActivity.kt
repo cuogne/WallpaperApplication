@@ -7,8 +7,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
 import coil3.load
+import coil3.request.placeholder
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
 
@@ -38,6 +41,7 @@ class DetailImageActivity : AppCompatActivity() {
             photo?.let {
                 descriptionImage.text = it.description
                 detailPhoto.load(it.urls?.regular){
+                    placeholder(it.color.toColorInt().toDrawable())
                     listener(
                         onSuccess = {_, _, ->
                             detailPhoto.visibility = View.VISIBLE
