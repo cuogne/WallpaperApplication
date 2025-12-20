@@ -1,5 +1,6 @@
 package com.cuogne.wallpaperapplication.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,21 +13,36 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     private val repository = PhotoRepository()
-    val photos = MutableLiveData<List<PhotoModel>>()
+    private val _photos = MutableLiveData<ArrayList<PhotoModel>>()
+    val photos: LiveData<ArrayList<PhotoModel>> get() = _photos
 
-    fun getPhotos(startPage: Int, endPage: Int) {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
+    fun getPhotos(pages: List<Int>, isRefresh: Boolean = false) {
         viewModelScope.launch {
             try {
                 val unsplash_api_key_access = BuildConfig.unsplash_api_key_access
+                _isLoading.value = true
 
-                val deferredPhoto = (startPage..endPage).map { id ->
+                // luu anh call tu api ve
+                val deferredPhoto = pages.map { page ->
                     async {
-                        repository.getRandomPhotos(id, unsplash_api_key_access)
+                        repository.getRandomPhotos(page, unsplash_api_key_access)
                     }
                 }
                 val response = deferredPhoto.awaitAll()
-                photos.value = response.flatten()
 
+                val newPhotos = response.flatten()
+
+                if (isRefresh) {
+                    _photos.value = ArrayList(newPhotos)
+                } else {
+                    val currentPhotos = _photos.value ?: ArrayList()
+                    currentPhotos.addAll(newPhotos) // them vao list photo truoc do
+                    _photos.value = currentPhotos
+                }
+                _isLoading.value = false
             } catch (e: Exception) {
                 e.printStackTrace()
             }
