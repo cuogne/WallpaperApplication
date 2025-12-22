@@ -19,32 +19,81 @@ class MainViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    fun getPhotos(pages: List<Int>, isRefresh: Boolean = false) {
+    fun getPhotos(
+        page: Int,
+        isRefresh: Boolean = false
+    ) {
         viewModelScope.launch {
             try {
-                val unsplash_api_key_access = BuildConfig.unsplash_api_key_access
                 _isLoading.value = true
+                val key = BuildConfig.unsplash_api_key_access
 
-                // luu anh call tu api ve
-                val deferredPhoto = pages.map { page ->
-                    async {
-                        repository.getRandomPhotos(page, unsplash_api_key_access)
-                    }
-                }
-                val response = deferredPhoto.awaitAll()
+                val newPhotos: ArrayList<PhotoModel> = arrayListOf()
+                newPhotos += repository.getRandomPhotos(page, key)
 
-                val newPhotos = response.flatten()
+//                val deferredPhoto = pages.map { page ->
+//                    async {
+//                        repository.getRandomPhotos(page, key)
+//                    }
+//                }
+//                val photos = deferredPhoto.awaitAll().flatten()
+//                newPhotos.addAll(photos)
 
                 if (isRefresh) {
-                    _photos.value = ArrayList(newPhotos)
+                    // tai lai
+                    _photos.value = newPhotos
                 } else {
-                    val currentPhotos = _photos.value ?: ArrayList()
-                    currentPhotos.addAll(newPhotos) // them vao list photo truoc do
-                    _photos.value = currentPhotos
+                    // them moi khi user keo xuong
+                    val current = _photos.value ?: arrayListOf()
+                    val filter = newPhotos.filter { photo ->
+                        current.none { it.id == photo.id }
+                    }
+                    current.addAll(filter)
+                    _photos.value = current
                 }
-                _isLoading.value = false
+
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+
+    fun searchPhotos(
+        query: String,
+        page: Int,
+        isNewSearch: Boolean
+    ) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                val key = BuildConfig.unsplash_api_key_access
+
+                val response = repository.getSearchPhotos(
+                    query,
+                    page,
+                    key
+                )
+
+                val newPhotos = response.results
+
+                if (isNewSearch) {
+                    _photos.value = ArrayList(newPhotos)
+                } else {
+                    val current = _photos.value ?: arrayListOf()
+                    val filter = newPhotos.filter { photo ->
+                        current.none { it.id == photo.id }
+                    }
+                    current.addAll(filter)
+                    _photos.value = current
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
             }
         }
     }
