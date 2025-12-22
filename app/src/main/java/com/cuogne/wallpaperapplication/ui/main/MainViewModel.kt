@@ -18,6 +18,7 @@ class MainViewModel : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
+    val API_KEY = BuildConfig.unsplash_api_key_access
 
     fun getPhotos(
         page: Int,
@@ -26,10 +27,9 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val key = BuildConfig.unsplash_api_key_access
 
                 val newPhotos: ArrayList<PhotoModel> = arrayListOf()
-                newPhotos += repository.getRandomPhotos(page, key)
+                newPhotos += repository.getRandomPhotos(page, API_KEY)
 
 //                val deferredPhoto = pages.map { page ->
 //                    async {
@@ -69,13 +69,8 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val key = BuildConfig.unsplash_api_key_access
 
-                val response = repository.getSearchPhotos(
-                    query,
-                    page,
-                    key
-                )
+                val response = repository.getSearchPhotos(query, page, API_KEY)
 
                 val newPhotos = response.results
 
