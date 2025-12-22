@@ -1,5 +1,6 @@
 package com.cuogne.wallpaperapplication.ui.main
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
@@ -53,10 +54,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        photoAdapter = PhotoAdapter{
+        photoAdapter = PhotoAdapter{ photo, view ->
             val intent = Intent(this, DetailImageActivity::class.java)
-            intent.putExtra("photo", it)
-            startActivity(intent)
+
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                this,
+                view,
+                view.transitionName
+            )
+
+            intent.putExtra("photo", photo)
+            startActivity(intent, options.toBundle())
         }
 
         val layout = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)

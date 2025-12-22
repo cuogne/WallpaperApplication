@@ -2,7 +2,8 @@ package com.cuogne.wallpaperapplication.ui.detail
 
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.transition.Fade
+import android.view.Window
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,20 +22,25 @@ class DetailImageActivity : AppCompatActivity() {
     private lateinit var descriptionImage: TextView
     private lateinit var btnBack: ImageButton
     private lateinit var viewModel: DetailImageViewModel
+    private lateinit var fade: Fade
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_image)
+
+        // init fade
+        supportPostponeEnterTransition()
+        fade = fadeTransition()
 
         detailPhoto = findViewById(R.id.detailPhoto)
         descriptionImage = findViewById(R.id.descriptionImage)
         btnBack = findViewById(R.id.btnBack)
 
         viewModel = ViewModelProvider(this)[DetailImageViewModel::class.java]
-
-        // an di cho den khi load xong
-        detailPhoto.visibility = View.INVISIBLE
-        descriptionImage.visibility = View.INVISIBLE
+        val photoFromIntent = getPhotoClicked()
+        detailPhoto.transitionName = photoFromIntent?.id
 
         // observe photo
         viewModel.photo.observe(this){ photo ->
@@ -43,19 +49,21 @@ class DetailImageActivity : AppCompatActivity() {
                 detailPhoto.load(it.urls?.regular){
                     placeholder(it.color.toColorInt().toDrawable())
                     listener(
-                        onSuccess = {_, _, ->
-                            detailPhoto.visibility = View.VISIBLE
-                            descriptionImage.visibility = View.VISIBLE
+                        onSuccess = { _, _ ->
+                            supportStartPostponedEnterTransition()
+                        },
+                        onError = { _, _ ->
+                            supportStartPostponedEnterTransition()
                         }
                     )
                 }
             }
         }
 
-        viewModel.setPhoto(getPhotoClicked())
+        viewModel.setPhoto(photoFromIntent)
 
         btnBack.setOnClickListener {
-            finish()
+            supportFinishAfterTransition()
         }
     }
 
@@ -68,5 +76,15 @@ class DetailImageActivity : AppCompatActivity() {
             intent.getParcelableExtra("photo")
         }
         return photo
+    }
+
+    private fun fadeTransition(): Fade{
+        val fade = Fade()
+        fade.excludeTarget(android.R.id.statusBarBackground, true)
+        fade.excludeTarget(android.R.id.navigationBarBackground, true)
+        window.enterTransition = fade
+        window.exitTransition = fade
+
+        return fade
     }
 }
