@@ -21,6 +21,9 @@ class DetailImageActivity : AppCompatActivity() {
     private lateinit var detailPhoto: ImageView
     private lateinit var descriptionImage: TextView
     private lateinit var btnBack: ImageButton
+    private lateinit var btnFullScreen: ImageButton
+    private lateinit var btnShareImage: ImageButton
+    private lateinit var btnSaveImage: ImageButton
     private lateinit var viewModel: DetailImageViewModel
     private lateinit var fade: Fade
 
@@ -37,6 +40,9 @@ class DetailImageActivity : AppCompatActivity() {
         detailPhoto = findViewById(R.id.detailPhoto)
         descriptionImage = findViewById(R.id.descriptionImage)
         btnBack = findViewById(R.id.btnBack)
+        btnSaveImage = findViewById(R.id.button_save_image)
+        btnFullScreen = findViewById(R.id.button_full_screen)
+        btnShareImage = findViewById(R.id.button_share)
 
         viewModel = ViewModelProvider(this)[DetailImageViewModel::class.java]
         val photoFromIntent = getPhotoClicked()
@@ -64,6 +70,14 @@ class DetailImageActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener {
             supportFinishAfterTransition()
+        }
+
+        btnFullScreen.setOnClickListener {
+            val currentDrawable = detailPhoto.drawable
+            if (currentDrawable != null) {
+                val dialog = FullScreenImageDialog(this, currentDrawable)
+                dialog.show()
+            }
         }
     }
 
