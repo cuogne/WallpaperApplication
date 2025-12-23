@@ -1,5 +1,7 @@
 package com.cuogne.wallpaperapplication.ui.detail
 
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.transition.Fade
@@ -8,6 +10,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +19,9 @@ import coil3.load
 import coil3.request.placeholder
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.data.model.PhotoModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 class DetailImageActivity : AppCompatActivity() {
 
@@ -79,6 +86,10 @@ class DetailImageActivity : AppCompatActivity() {
                 dialog.show()
             }
         }
+
+        btnShareImage.setOnClickListener {
+            shareImage()
+        }
     }
 
     private fun getPhotoClicked(): PhotoModel?{
@@ -100,5 +111,43 @@ class DetailImageActivity : AppCompatActivity() {
         window.exitTransition = fade
 
         return fade
+    }
+
+    private fun shareImage() {
+        val drawable = detailPhoto.drawable ?: return
+        val bitmap = drawable.toBitmap()
+
+        try {
+            val cachePath = File(applicationContext.cacheDir, "images")
+            cachePath.mkdirs()
+
+            // luu file anh tam vao cache
+            val file = File(cachePath, "image.png")
+            val fileOutputStream = FileOutputStream(file)
+
+            // ghi bitmap vao file
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+            fileOutputStream.close()
+
+            // lay uri
+            val imageUri = FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.provider",
+                file
+            )
+
+            // dung intent + ACTION_SEND + createChooser
+            if (imageUri != null) {
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/png"
+                    putExtra(Intent.EXTRA_STREAM, imageUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(shareIntent, "Share Image"))
+            }
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }
