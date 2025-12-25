@@ -1,15 +1,23 @@
 package com.cuogne.wallpaperapplication.ui.detail
 
+import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.transition.Fade
 import android.view.Window
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
@@ -22,6 +30,7 @@ import com.cuogne.wallpaperapplication.data.model.PhotoModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import androidx.core.net.toUri
 
 class DetailImageActivity : AppCompatActivity() {
 
@@ -33,6 +42,10 @@ class DetailImageActivity : AppCompatActivity() {
     private lateinit var btnSaveImage: ImageButton
     private lateinit var viewModel: DetailImageViewModel
     private lateinit var fade: Fade
+
+    private var currentPhotoUrl: String? = null
+    private var currentPhotoId: String = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
@@ -89,6 +102,13 @@ class DetailImageActivity : AppCompatActivity() {
 
         btnShareImage.setOnClickListener {
             shareImage()
+        }
+
+        btnSaveImage.setOnClickListener {
+            val photo = getPhotoClicked()
+            val imageUrl = photo?.urls?.regular
+            val photoId = photo?.id ?: ""
+            onSaveImageClicked(imageUrl, photoId)
         }
     }
 
@@ -150,4 +170,94 @@ class DetailImageActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
+    fun onSaveImageClicked(imageUrl: String?, photoId: String) {
+        if (imageUrl.isNullOrEmpty()) {
+            Toast.makeText(this, "Ảnh không hợp lệ", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        currentPhotoUrl = imageUrl
+        currentPhotoId = photoId
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // API < 29
+            if (hasWritePermission()) {
+                downloadImage(this, imageUrl, photoId)
+            } else {
+                requestWritePermission()
+            }
+        } else {
+            // API >= 29
+            downloadImage(this, imageUrl, photoId)
+        }
+
+        Toast.makeText(this, "Tải ảnh thành công", Toast.LENGTH_SHORT).show()
+    }
+
+    // cho api > 29, dung downloadManager
+    private fun downloadImage(context: Context, imageUrl: String, fileName: String){
+        val request = DownloadManager.Request(imageUrl.toUri())
+            .setTitle("Download photo")
+            .setDescription("Saving image to gallery")
+            .setNotificationVisibility(
+                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+            )
+            .setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_PICTURES,
+                "Wallpaper/$fileName.jpg"
+            )
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true)
+
+        val downloadManager =
+            context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+
+        downloadManager.enqueue(request)
+
+        Toast.makeText(context, "Đang tải ảnh", Toast.LENGTH_SHORT).show()
+    }
+
+
+    // cho api < 29, xin quyen write external storage de luu anh
+    private fun hasWritePermission(): Boolean {
+        // check quyền write external storage
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestWritePermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            1001
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 1001) {
+            if (grantResults.isNotEmpty()
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                currentPhotoUrl?.let {
+                    downloadImage(this, it, currentPhotoId)
+                }
+            } else {
+                Toast.makeText(
+                    this,
+                    "Cần quyền lưu ảnh để tải ảnh",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
 }
