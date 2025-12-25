@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.cuogne.wallpaperapplication" />
+                  <option name="mobileSdkAppId" value="1:1000170351254:android:2ac46f11389990c02270b7" />
+                  <option name="projectId" value="wallpaperapplication-eef8b" />
+                  <option name="projectNumber" value="1000170351254" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

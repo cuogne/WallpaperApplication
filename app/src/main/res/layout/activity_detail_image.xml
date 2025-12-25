@@ -21,6 +21,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/button_add_favorite"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/button_circle"
+        android:contentDescription="full screen button"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="35dp"
+        android:src="@drawable/add_favorite"
+        app:tint="@color/white"
+        android:backgroundTint="@color/cardview_dark_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
