@@ -4,6 +4,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -15,8 +16,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.ui.adapter.PhotoAdapter
+import com.cuogne.wallpaperapplication.ui.auth.AuthLoginGoogleFragment
 import com.cuogne.wallpaperapplication.ui.detail.DetailImageActivity
+import com.cuogne.wallpaperapplication.ui.profile.ProfileActivity
 import com.cuogne.wallpaperapplication.utils.randomNumberPages
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var photoAdapter: PhotoAdapter
     private lateinit var titleApp: TextView
     private lateinit var searchEditText: EditText
+    private lateinit var btnAccount: ImageButton
     private var startPage = 1
     private var searchJob: Job? = null
     private var query: String = ""
@@ -40,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         recyclerViewPhoto = findViewById(R.id.recyclerViewPhoto)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         searchEditText = findViewById(R.id.searchBar)
+        btnAccount = findViewById(R.id.btnAccount)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         // cuon len dau khi click vao title app
@@ -60,6 +66,20 @@ class MainActivity : AppCompatActivity() {
         viewModel.getPhotos(startPage, isRefresh = true)
 
         setupSearch()
+
+        btnAccount.setOnClickListener {
+            val user = FirebaseAuth.getInstance().currentUser
+
+            if (user == null) {
+                // chua login
+                AuthLoginGoogleFragment.newInstance().show(supportFragmentManager,
+                    AuthLoginGoogleFragment.TAG)
+            } else {
+                // login roi
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupSearch() {

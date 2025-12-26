@@ -14,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WallpaperApplication">
         <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.detail.DetailImageActivity"
             android:exported="false" />
         <activity
@@ -35,7 +41,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>
