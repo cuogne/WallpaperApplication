@@ -31,6 +31,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import androidx.core.net.toUri
+import com.cuogne.wallpaperapplication.ui.auth.AuthLoginGoogleFragment
+import com.google.firebase.auth.FirebaseAuth
 
 class DetailImageActivity : AppCompatActivity() {
 
@@ -40,11 +42,12 @@ class DetailImageActivity : AppCompatActivity() {
     private lateinit var btnFullScreen: ImageButton
     private lateinit var btnShareImage: ImageButton
     private lateinit var btnSaveImage: ImageButton
+    private lateinit var btnAddFavoriteImage: ImageButton
     private lateinit var viewModel: DetailImageViewModel
     private lateinit var fade: Fade
-
     private var currentPhotoUrl: String? = null
     private var currentPhotoId: String = ""
+    private lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +66,9 @@ class DetailImageActivity : AppCompatActivity() {
         btnSaveImage = findViewById(R.id.button_save_image)
         btnFullScreen = findViewById(R.id.button_full_screen)
         btnShareImage = findViewById(R.id.button_share)
+        btnAddFavoriteImage = findViewById(R.id.button_add_favorite)
 
+        auth = FirebaseAuth.getInstance()
         viewModel = ViewModelProvider(this)[DetailImageViewModel::class.java]
         val photoFromIntent = getPhotoClicked()
         detailPhoto.transitionName = photoFromIntent?.id
@@ -85,8 +90,25 @@ class DetailImageActivity : AppCompatActivity() {
                 }
             }
         }
+        viewModel.isFavorite.observe(this){isFav ->
+            val icon = if (isFav){
+                R.drawable.add_favorite
+            }else{
+                R.drawable.not_favorite
+            }
+            btnAddFavoriteImage.setImageResource(icon)
+        }
+
+        // thong bao khi click vao button them anh
+        viewModel.favoriteMessage.observe(this) { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                viewModel.clearFavoriteMessage()
+            }
+        }
 
         viewModel.setPhoto(photoFromIntent)
+        viewModel.checkFavoriteStatus(photoFromIntent?.id ?: "")
 
         btnBack.setOnClickListener {
             supportFinishAfterTransition()
@@ -110,6 +132,10 @@ class DetailImageActivity : AppCompatActivity() {
             val photoId = photo?.id ?: ""
             onSaveImageClicked(imageUrl, photoId)
         }
+
+        btnAddFavoriteImage.setOnClickListener {
+            handleFavoriteClick()
+        }
     }
 
     private fun getPhotoClicked(): PhotoModel?{
@@ -121,6 +147,24 @@ class DetailImageActivity : AppCompatActivity() {
             intent.getParcelableExtra("photo")
         }
         return photo
+    }
+
+    private fun handleFavoriteClick() {
+        val currentUser = auth.currentUser
+
+        // chua login -> hien fragment login
+        if (currentUser == null) {
+            val loginFragment = AuthLoginGoogleFragment.newInstance()
+            loginFragment.onLoginSuccessCallback = {
+                viewModel.toggleFavoriteStatus()
+            }
+            loginFragment.show(
+                supportFragmentManager,
+                AuthLoginGoogleFragment.TAG
+            )
+        } else {
+            viewModel.toggleFavoriteStatus()
+        }
     }
 
     private fun fadeTransition(): Fade{

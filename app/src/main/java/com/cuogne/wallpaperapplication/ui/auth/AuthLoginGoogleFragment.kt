@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 class AuthLoginGoogleFragment : DialogFragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var credentialManager: CredentialManager
+    var onLoginSuccessCallback: (() -> Unit)? = null // callback khi login thanh cong
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,6 +122,8 @@ class AuthLoginGoogleFragment : DialogFragment() {
                         "Login successful",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    onLoginSuccessCallback?.invoke()
                     
                     dismiss()
                 } else {

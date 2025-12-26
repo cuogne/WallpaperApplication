@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="15dp"
-    tools:context=".ui.profile.ProfileActivity">
+    tools:context=".ui.favorite.FavoritePhotoActivity">
 
     <ImageButton
         android:id="@+id/btnBackInProfile"
@@ -27,6 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
         android:text="Xin chào user"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/btnLogout"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btnBackInProfile"
@@ -44,5 +46,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/titleFavorite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mục ảnh yêu thích của bạn"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/helloUser" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFavoritePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleFavorite" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

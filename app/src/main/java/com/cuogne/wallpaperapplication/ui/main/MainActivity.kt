@@ -18,7 +18,7 @@ import com.cuogne.wallpaperapplication.R
 import com.cuogne.wallpaperapplication.ui.adapter.PhotoAdapter
 import com.cuogne.wallpaperapplication.ui.auth.AuthLoginGoogleFragment
 import com.cuogne.wallpaperapplication.ui.detail.DetailImageActivity
-import com.cuogne.wallpaperapplication.ui.profile.ProfileActivity
+import com.cuogne.wallpaperapplication.ui.favorite.FavoritePhotoActivity
 import com.cuogne.wallpaperapplication.utils.randomNumberPages
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Job
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     AuthLoginGoogleFragment.TAG)
             } else {
                 // login roi
-                val intent = Intent(this, ProfileActivity::class.java)
+                val intent = Intent(this, FavoritePhotoActivity::class.java)
                 startActivity(intent)
             }
         }
