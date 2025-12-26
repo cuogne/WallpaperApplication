@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.cuogne.wallpaperapplication.R
@@ -17,7 +19,9 @@ import kotlinx.coroutines.launch
 class ProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var credentialManager: CredentialManager
-    private lateinit var btnLogout: Button
+    private lateinit var btnLogout: ImageButton
+    private lateinit var btnBackInProfile: ImageButton
+    private lateinit var helloUser: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,9 +31,18 @@ class ProfileActivity : AppCompatActivity() {
         credentialManager = CredentialManager.create(this)
 
         btnLogout = findViewById(R.id.btnLogout)
+        btnBackInProfile = findViewById(R.id.btnBackInProfile)
+        helloUser = findViewById(R.id.helloUser)
+
+        val currentUser = auth.currentUser
+        helloUser.text = "Hello, ${currentUser?.displayName}"
 
         btnLogout.setOnClickListener {
             logout()
+        }
+
+        btnBackInProfile.setOnClickListener {
+            finish()
         }
     }
 
@@ -44,9 +57,6 @@ class ProfileActivity : AppCompatActivity() {
             } catch (e: ClearCredentialException) {
                 Log.e("ProfileActivity", "Clear credential failed", e)
             } finally {
-                val intent = Intent(this@ProfileActivity, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
                 finish()
             }
         }
